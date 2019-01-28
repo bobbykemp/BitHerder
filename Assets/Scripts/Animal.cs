@@ -106,6 +106,7 @@ public class Animal : MonoBehaviour {
 
     IEnumerator Move(Vector2 direction, float travel_time) {
         Vector2 start = transform.position;
+        //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
         float time_start = Time.time;
 
         Debug.DrawLine(start, direction, Color.yellow, 5f);
