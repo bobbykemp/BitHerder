@@ -66,6 +66,11 @@ public class Animal : MonoBehaviour {
         
     }
 
+    IEnumerator MoveAverage() {
+        while (true) {
+        }
+    }
+
     //Represents aimless, illogical movement
     IEnumerator MoveRandom() {
 
