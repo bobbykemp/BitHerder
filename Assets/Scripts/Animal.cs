@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class Animal : MonoBehaviour {
 
+    private const int ANIMAL_LAYER = 9;
+
     public float maxSpeed = 5f;
     public float fleeing_proximity = 8; //closest radius at which an animal will flee from user's cursor
     public float flee_distance = 5f;    //distance the animal will flee when provoked
@@ -27,7 +29,7 @@ public class Animal : MonoBehaviour {
         float interval = Random.Range(1f, 4f);
         moverand = StartCoroutine(MoveRandom());
         anim.SetBool("Moving", true);
-        Physics2D.IgnoreLayerCollision(9, 9);
+        Physics2D.IgnoreLayerCollision(ANIMAL_LAYER, ANIMAL_LAYER);
     }
 
     void Update() {
@@ -104,7 +106,7 @@ public class Animal : MonoBehaviour {
 
         Debug.DrawLine(start, direction, Color.yellow, 5f);
 
-        hit = Physics2D.Raycast(transform.position, direction, flee_distance, 9);
+        hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
 
         //Prevents the mean ol' player from shoving sheep into a corner. Because nobody puts sheep in a corner.
         //It's hacky; sorry!
@@ -117,7 +119,7 @@ public class Animal : MonoBehaviour {
 
         while (Time.time < time_start + travel_time && (hit.distance > .8f || hit.collider == null)) {
             transform.position = Vector2.Lerp(start, direction, (Time.time - time_start) / travel_time);
-            hit = Physics2D.Raycast(transform.position, direction, flee_distance, 9);
+            hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
             print("Collider hit: " + (hit.collider == null ? "Nothing" : hit.collider.name) + " Starting distance from collision: " + hit.distance + " Distance from collision (current frame): " + hit.distance);
             yield return null;
         }
