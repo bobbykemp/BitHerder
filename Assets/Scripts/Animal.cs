@@ -14,6 +14,8 @@ public class Animal : MonoBehaviour {
     public float maxSpeed = 5f;
     public float fleeing_proximity = 8; //closest radius at which an animal will flee from user's cursor
     public float flee_distance = 5f;    //distance the animal will flee when provoked
+    public CircleCollider2D personal_space;
+    public CircleCollider2D environment;
 
     private Vector2 movement;
     private float timeLeft;
@@ -125,7 +127,7 @@ public class Animal : MonoBehaviour {
         while (Time.time < time_start + travel_time && (hit.distance > .8f || hit.collider == null)) {
             transform.position = Vector2.Lerp(start, direction, (Time.time - time_start) / travel_time);
             hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
-            print("Collider hit: " + (hit.collider == null ? "Nothing" : hit.collider.name) + " Starting distance from collision: " + hit.distance + " Distance from collision (current frame): " + hit.distance);
+            //print("Collider hit: " + (hit.collider == null ? "Nothing" : hit.collider.name) + " Starting distance from collision: " + hit.distance + " Distance from collision (current frame): " + hit.distance);
             yield return null;
         }
 
