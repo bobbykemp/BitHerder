@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class Animal : MonoBehaviour {
 
+    //the ninth layer represents the layer that the animals are on
+    //this constant is used to prevent collisions between animal rigidbodies
     private const int ANIMAL_LAYER = 9;
 
     public float maxSpeed = 5f;
@@ -26,9 +28,9 @@ public class Animal : MonoBehaviour {
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
-        float interval = Random.Range(1f, 4f);
+
         moverand = StartCoroutine(MoveRandom());
-        anim.SetBool("Moving", true);
+
         Physics2D.IgnoreLayerCollision(ANIMAL_LAYER, ANIMAL_LAYER);
     }
 
@@ -62,6 +64,7 @@ public class Animal : MonoBehaviour {
         
     }
 
+    //Represents aimless, illogical movement
     IEnumerator MoveRandom() {
 
         while (true) {
@@ -88,6 +91,7 @@ public class Animal : MonoBehaviour {
         }
     }
 
+    //Represents provoked movement that always moves away from the user's finger/cursor
     IEnumerator MoveAway(Vector2 direction, float distance) {
 
         float traveltime = 1.5f;
