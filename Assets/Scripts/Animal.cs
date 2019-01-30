@@ -17,6 +17,8 @@ public class Animal : MonoBehaviour {
     public CircleCollider2D personal_space;
     public CircleCollider2D environment;
 
+    private GameObject omanager;
+    private HerdManager manager;
     private Vector2 movement;
     private float timeLeft;
     private Rigidbody2D rb;
@@ -30,6 +32,11 @@ public class Animal : MonoBehaviour {
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
+
+        omanager = GameObject.FindGameObjectWithTag("Manager");
+        manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
+
+        manager.RecalculateAnimalNumber();
 
         moverand = StartCoroutine(MoveRandom());
 
@@ -64,6 +71,10 @@ public class Animal : MonoBehaviour {
             }
         }
         
+    }
+
+    private void OnDestroy() {
+        manager.RecalculateAnimalNumber();
     }
 
     IEnumerator MoveAverage() {
