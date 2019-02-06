@@ -174,7 +174,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 14.904982
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instantiation_animal: {fileID: 1843989129757262, guid: 972cca9d910c1614da41a8ead688951e,
     type: 2}
-  animal_instantiation_count: 100
+  animal_instantiation_count: 20
 --- !u!4 &757112961
 Transform:
   m_ObjectHideFlags: 0

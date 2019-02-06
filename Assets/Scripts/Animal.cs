@@ -67,7 +67,7 @@ public class Animal : MonoBehaviour {
                 StopAllCoroutines();
 
                 //begin fleeing routine
-                StartCoroutine(MoveAway(flee_direction, flee_distance));
+                StartCoroutine(MoveAwayFromClick(flee_direction, flee_distance));
             }
         }
         
@@ -77,9 +77,19 @@ public class Animal : MonoBehaviour {
         manager.RecalculateAnimalNumber();
     }
 
-    IEnumerator MoveAverage() {
-        while (true) {
-        }
+    IEnumerator GroupUp() {
+        Vector2 vector_average = manager.GetAverage();
+
+        //smaller travel time means faster movement
+        float traveltime = Random.Range(3f, 4f);
+        float timestart = Time.time;
+        Vector2 locstart = transform.position;
+
+        yield return StartCoroutine(Move(vector_average, traveltime));
+
+        //prevents animal from moving immediatley from one location to the next
+        float wait_time = Random.Range(2f, 4f);
+        yield return new WaitForSeconds(wait_time);
     }
 
     //Represents aimless, illogical movement
@@ -87,8 +97,6 @@ public class Animal : MonoBehaviour {
 
         while (true) {
             
-            //print("Entered move");
-
             //includes the possible of a zero outcome
             //may need to alter this in future
             Vector2 randtrans = Random.insideUnitCircle * Random.Range(-5f, 5f);
@@ -106,11 +114,13 @@ public class Animal : MonoBehaviour {
             //prevents animal from moving immediatley from one location to the next
             float wait_time = Random.Range(2f, 4f);
             yield return new WaitForSeconds(wait_time);
+
+            yield return StartCoroutine(GroupUp());
         }
     }
 
     //Represents provoked movement that always moves away from the user's finger/cursor
-    IEnumerator MoveAway(Vector2 direction, float distance) {
+    IEnumerator MoveAwayFromClick(Vector2 direction, float distance) {
 
         float traveltime = 1.5f;
         float timestart = Time.time;

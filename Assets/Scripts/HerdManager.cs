@@ -69,7 +69,7 @@ public class HerdManager : MonoBehaviour {
         InvokeRepeating("GetAverage", 0f, 3f);
     }
 
-    Vector2 GetAverage() {
+    public Vector2 GetAverage() {
         total_x = 0;
         total_y = 0;
 
