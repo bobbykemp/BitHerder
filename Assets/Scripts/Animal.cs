@@ -15,7 +15,6 @@ public class Animal : MonoBehaviour {
     public float fleeing_proximity = 8; //closest radius at which an animal will flee from user's cursor
     public float flee_distance = 5f;    //distance the animal will flee when provoked
     public CircleCollider2D personal_space;
-    public CircleCollider2D environment;
 
     private GameObject omanager;
     private HerdManager manager;
@@ -40,7 +39,7 @@ public class Animal : MonoBehaviour {
 
         moverand = StartCoroutine(MoveRandom());
 
-        Physics2D.IgnoreLayerCollision(ANIMAL_LAYER, ANIMAL_LAYER);
+        //Physics2D.IgnoreLayerCollision(ANIMAL_LAYER, ANIMAL_LAYER);
     }
 
     void Update() {
@@ -75,6 +74,16 @@ public class Animal : MonoBehaviour {
 
     private void OnDestroy() {
         manager.RecalculateAnimalNumber();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        print("collision");
+        switch (collision.gameObject.tag) {
+            case "Animal":
+                StopAllCoroutines();
+                moverand = StartCoroutine(MoveRandom());
+                break;
+        }
     }
 
     IEnumerator GroupUp() {

@@ -29,7 +29,6 @@ public class HerdManager : MonoBehaviour {
         text = canvas.GetComponent<Text>();
 
         animal_starting_amount = animals.Length;
-        print(animal_starting_amount);
 
         text.text = "Herd Remaining : %" + Mathf.Round(((float)animals.Length / (float)animal_starting_amount) * 100f);
 
