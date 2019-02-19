@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+//using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,13 +28,27 @@ public class Animal : MonoBehaviour {
     private SpriteRenderer rend;
     private RaycastHit2D hit;
     private Coroutine moverand;
+    private List<GameObject> environment;
 
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
 
+        environment = new List<GameObject>();
+
         omanager = GameObject.FindGameObjectWithTag("Manager");
         manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
+
+
+        //try {
+            
+        //}
+
+        //catch(Exception e) {
+        //    if (e.InnerException is NullReferenceException){
+
+        //    }
+        //}
 
         manager.RecalculateAnimalNumber();
 
@@ -77,11 +92,17 @@ public class Animal : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        print("collision");
         switch (collision.gameObject.tag) {
             case "Animal":
-                StopAllCoroutines();
-                moverand = StartCoroutine(MoveRandom());
+                //print("Animal collision");
+                //StopAllCoroutines();
+                //moverand = StartCoroutine(MoveRandom());
+                environment.Add(collision.gameObject);
+                break;
+            case "Landmine":
+                //print("Landmine collision");
+                Trap trap = (Trap)collision.gameObject.GetComponent(typeof(Trap));
+                trap.Activate(this.gameObject);
                 break;
         }
     }
