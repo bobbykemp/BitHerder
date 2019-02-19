@@ -29,6 +29,7 @@ public class Animal : MonoBehaviour {
     private RaycastHit2D hit;
     private Coroutine moverand;
     private List<GameObject> environment;
+    bool moving_randomly;
 
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -36,8 +37,10 @@ public class Animal : MonoBehaviour {
 
         environment = new List<GameObject>();
 
-        omanager = GameObject.FindGameObjectWithTag("Manager");
-        manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
+        moving_randomly = false;
+
+        //omanager = GameObject.FindGameObjectWithTag("Manager");
+        //manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
 
 
         //try {
@@ -50,9 +53,9 @@ public class Animal : MonoBehaviour {
         //    }
         //}
 
-        manager.RecalculateAnimalNumber();
+        //manager.RecalculateAnimalNumber();
 
-        moverand = StartCoroutine(MoveRandom());
+        //moverand = StartCoroutine(MoveRandom());
 
         //Physics2D.IgnoreLayerCollision(ANIMAL_LAYER, ANIMAL_LAYER);
     }
@@ -61,15 +64,27 @@ public class Animal : MonoBehaviour {
 
         //get the current position of the mouse on the screen in terms of world space
         mousepos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
         distance = mousepos - (Vector2)transform.position;
+
+        //check if there is anyone nearby
+        if (environment.Count > 0) {
+            // do boid-like behavior
+            foreach(GameObject o in environment) {
+                Debug.DrawLine(o.transform.position, transform.position, Color.red);
+            }
+        }
+
+        else {
+            //move about randomly
+            if (!moving_randomly) {
+                moverand = StartCoroutine(MoveRandom());
+            }
+        }
 
         //define the vector coming out of the other side of the animal
         //this is the direction the animal will flee
         //flee_distance must ALWAYS be negative or else the animal will flee toward user's cursor
         Vector2 flee_direction = Vector2.MoveTowards(transform.position, mousepos, -flee_distance);
-
-        //print("Flee direction is: " + flee_direction);
 
         //show the flee vector for debug purposes
         Debug.DrawLine(transform.position, flee_direction, Color.white);
@@ -88,7 +103,7 @@ public class Animal : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        manager.RecalculateAnimalNumber();
+        //manager.RecalculateAnimalNumber();
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
@@ -107,15 +122,23 @@ public class Animal : MonoBehaviour {
         }
     }
 
+    private void OnTriggerExit2D(Collider2D collision) {
+        switch (collision.gameObject.tag) {
+            case "Animal":
+                environment.Remove(collision.gameObject);
+                break;
+        }
+    }
+
     IEnumerator GroupUp() {
-        Vector2 vector_average = manager.GetAverage();
+        //Vector2 vector_average = manager.GetAverage();
 
         //smaller travel time means faster movement
         float traveltime = Random.Range(3f, 4f);
         float timestart = Time.time;
         Vector2 locstart = transform.position;
 
-        yield return StartCoroutine(Move(vector_average, traveltime));
+        //yield return StartCoroutine(Move(vector_average, traveltime));
 
         //prevents animal from moving immediatley from one location to the next
         float wait_time = Random.Range(2f, 4f);
@@ -124,6 +147,8 @@ public class Animal : MonoBehaviour {
 
     //Represents aimless, illogical movement
     IEnumerator MoveRandom() {
+
+        moving_randomly = true;
 
         while (true) {
             
@@ -145,7 +170,9 @@ public class Animal : MonoBehaviour {
             float wait_time = Random.Range(2f, 4f);
             yield return new WaitForSeconds(wait_time);
 
-            yield return StartCoroutine(GroupUp());
+            //moving_randomly = false;
+
+            //yield return StartCoroutine(GroupUp());
         }
     }
 
