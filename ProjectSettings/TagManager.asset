@@ -8,6 +8,7 @@ TagManager:
   - Manager
   - Overlay
   - StartCrate
+  - Landmine
   layers:
   - Default
   - TransparentFX
