@@ -28,14 +28,16 @@ public class Animal : MonoBehaviour {
     private SpriteRenderer rend;
     private RaycastHit2D hit;
     private Coroutine moverand;
+    private Coroutine move;
     private List<GameObject> environment;
-    bool moving_randomly;
+    bool moving_randomly, moving, grouped_up;
 
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
 
         environment = new List<GameObject>();
+        environment.Add(gameObject);
 
         moving_randomly = false;
 
@@ -62,16 +64,43 @@ public class Animal : MonoBehaviour {
 
     void Update() {
 
+        //print("Am I moving? >" + moving);
+
         //get the current position of the mouse on the screen in terms of world space
         mousepos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         distance = mousepos - (Vector2)transform.position;
 
-        //check if there is anyone nearby
-        if (environment.Count > 0) {
-            // do boid-like behavior
-            foreach(GameObject o in environment) {
-                Debug.DrawLine(o.transform.position, transform.position, Color.red);
+        foreach(GameObject o in environment) {
+            if (!o.Equals(gameObject)) {
+                float distance_to = Vector2.Distance(transform.position, o.transform.position);
+                //print(distance_to);
+                if (distance_to < 2f) {
+                    grouped_up = true;
+                }
             }
+        }
+
+        //check if there is anyone nearby
+        if (environment.Count > 1) {
+            // do boid-like behavior
+            Vector2 avg = FindAverageVector2(environment);
+            Debug.DrawLine(transform.position, avg, Color.black, 3f);
+
+            Vector2 anti_avg= Vector2.MoveTowards(transform.position, avg, -5f);
+            //Debug.DrawLine(transform.position, anti_avg, Color.green);
+
+            if (!moving) {
+                move = StartCoroutine(Move(avg, 3f));
+            }
+            else if (transform.position.Equals(avg)) {
+                print("Arrived");
+            }
+
+            //if (move_away && !moving) {
+            //    print("moving away");
+            //    StopCoroutine(move);
+            //    move = StartCoroutine(Move(anti_avg, 3f));
+            //}
         }
 
         else {
@@ -100,6 +129,24 @@ public class Animal : MonoBehaviour {
             }
         }
         
+    }
+
+    private Vector2 FindAverageVector2(List<GameObject> environment) {
+
+        float total_x = 0;
+        float total_y = 0;
+
+        foreach (GameObject g in environment) {
+            total_x += g.transform.position.x;
+            total_y += g.transform.position.y;
+        }
+
+        float average_x = total_x / environment.Count;
+        float average_y = total_y / environment.Count;
+
+        Vector2 avg = new Vector2(average_x, average_y);
+
+        return avg;
     }
 
     private void OnDestroy() {
@@ -190,6 +237,11 @@ public class Animal : MonoBehaviour {
     }
 
     IEnumerator Move(Vector2 direction, float travel_time) {
+
+        print("starting move");
+
+        moving = true;
+
         Vector2 start = transform.position;
         //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
         float time_start = Time.time;
@@ -214,8 +266,12 @@ public class Animal : MonoBehaviour {
             yield return null;
         }
 
+        moving = false;
+
         //Stop movement animation
         anim.SetBool("Moving", false);
+
+        print("Stopping move");
     }
 
 }
