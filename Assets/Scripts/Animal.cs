@@ -28,25 +28,25 @@ public class Animal : MonoBehaviour {
     private SpriteRenderer rend;
     private RaycastHit2D hit;
     private Coroutine moverand;
-    private Coroutine move;
     private List<GameObject> environment;
-    bool moving_randomly, moving, grouped_up;
+    bool moving_randomly;
 
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
         anim = gameObject.GetComponent<Animator>();
 
         environment = new List<GameObject>();
-        environment.Add(gameObject);
 
         moving_randomly = false;
+
+        moverand = StartCoroutine(MoveRandom());
 
         //omanager = GameObject.FindGameObjectWithTag("Manager");
         //manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
 
 
         //try {
-            
+
         //}
 
         //catch(Exception e) {
@@ -64,51 +64,48 @@ public class Animal : MonoBehaviour {
 
     void Update() {
 
-        //print("Am I moving? >" + moving);
-
         //get the current position of the mouse on the screen in terms of world space
         mousepos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         distance = mousepos - (Vector2)transform.position;
 
-        foreach(GameObject o in environment) {
-            if (!o.Equals(gameObject)) {
-                float distance_to = Vector2.Distance(transform.position, o.transform.position);
-                //print(distance_to);
-                if (distance_to < 2f) {
-                    grouped_up = true;
-                }
-            }
-        }
-
         //check if there is anyone nearby
-        if (environment.Count > 1) {
+<<<<<<< HEAD
+        //if (environment.Count > 1) {
+        //    // do boid-like behavior
+        //    Vector2 avg = FindAverageVector2(environment);
+        //    Debug.DrawLine(transform.position, avg, Color.black, 3f);
+
+        //    Vector2 anti_avg= Vector2.MoveTowards(transform.position, avg, -5f);
+        //    //Debug.DrawLine(transform.position, anti_avg, Color.green);
+
+        //    if (!moving) {
+        //        move = StartCoroutine(Move(avg, 3f));
+        //    }
+        //    else if (transform.position.Equals(avg)) {
+        //        print("Arrived");
+        //    }
+
+        //    //if (move_away && !moving) {
+        //    //    print("moving away");
+        //    //    StopCoroutine(move);
+        //    //    move = StartCoroutine(Move(anti_avg, 3f));
+        //    //}
+        //}
+=======
+        if (environment.Count > 0) {
             // do boid-like behavior
-            Vector2 avg = FindAverageVector2(environment);
-            Debug.DrawLine(transform.position, avg, Color.black, 3f);
-
-            Vector2 anti_avg= Vector2.MoveTowards(transform.position, avg, -5f);
-            //Debug.DrawLine(transform.position, anti_avg, Color.green);
-
-            if (!moving) {
-                move = StartCoroutine(Move(avg, 3f));
-            }
-            else if (transform.position.Equals(avg)) {
-                print("Arrived");
-            }
-
-            //if (move_away && !moving) {
-            //    print("moving away");
-            //    StopCoroutine(move);
-            //    move = StartCoroutine(Move(anti_avg, 3f));
-            //}
-        }
-
-        else {
-            //move about randomly
-            if (!moving_randomly) {
-                moverand = StartCoroutine(MoveRandom());
+            foreach(GameObject o in environment) {
+                Debug.DrawLine(o.transform.position, transform.position, Color.red);
             }
         }
+>>>>>>> parent of 2a4f31c... Added Environment Checking, Vector Calculation Test Script
+
+        //else {
+        //    //move about randomly
+        //    if (!moving_randomly) {
+        //        moverand = StartCoroutine(MoveRandom());
+        //    }
+        //}
 
         //define the vector coming out of the other side of the animal
         //this is the direction the animal will flee
@@ -129,24 +126,6 @@ public class Animal : MonoBehaviour {
             }
         }
         
-    }
-
-    private Vector2 FindAverageVector2(List<GameObject> environment) {
-
-        float total_x = 0;
-        float total_y = 0;
-
-        foreach (GameObject g in environment) {
-            total_x += g.transform.position.x;
-            total_y += g.transform.position.y;
-        }
-
-        float average_x = total_x / environment.Count;
-        float average_y = total_y / environment.Count;
-
-        Vector2 avg = new Vector2(average_x, average_y);
-
-        return avg;
     }
 
     private void OnDestroy() {
@@ -237,14 +216,17 @@ public class Animal : MonoBehaviour {
     }
 
     IEnumerator Move(Vector2 direction, float travel_time) {
+<<<<<<< HEAD
 
         print("starting move");
 
         moving = true;
 
+        float speed = 0.2f;
+
+=======
+>>>>>>> parent of 2a4f31c... Added Environment Checking, Vector Calculation Test Script
         Vector2 start = transform.position;
-        //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
-        float time_start = Time.time;
 
         Debug.DrawLine(start, direction, Color.yellow, 5f);
 
@@ -259,19 +241,17 @@ public class Animal : MonoBehaviour {
         //Start movement animation
         anim.SetBool("Moving", true);
 
-        while (Time.time < time_start + travel_time && (hit.distance > .8f || hit.collider == null)) {
-            transform.position = Vector2.Lerp(start, direction, (Time.time - time_start) / travel_time);
+        print("Distance: " + Vector2.Distance(transform.position, direction));
+
+        while (Vector2.Distance(transform.position, direction) > 0 && (hit.distance > .8f || hit.collider == null)) {
+            transform.position = Vector2.Lerp(start, direction, speed);
             hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
             //print("Collider hit: " + (hit.collider == null ? "Nothing" : hit.collider.name) + " Starting distance from collision: " + hit.distance + " Distance from collision (current frame): " + hit.distance);
             yield return null;
         }
 
-        moving = false;
-
         //Stop movement animation
         anim.SetBool("Moving", false);
-
-        print("Stopping move");
     }
 
 }
