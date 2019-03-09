@@ -219,14 +219,9 @@ public class Animal : MonoBehaviour {
     }
 
     IEnumerator Move(Vector2 direction, float travel_time) {
-
-        print("starting move");
-
-        moving = true;
-
-        float speed = 0.2f;
-
         Vector2 start = transform.position;
+        //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
+        float time_start = Time.time;
 
         Debug.DrawLine(start, direction, Color.yellow, 5f);
 
@@ -234,17 +229,15 @@ public class Animal : MonoBehaviour {
 
         //Prevents the mean ol' player from shoving sheep into a corner. Because nobody puts sheep in a corner.
         //It's hacky; sorry!
-        if(hit.distance < .8f) {
+        if (hit.distance < .8f) {
             transform.Translate(-direction / 100);
         }
 
         //Start movement animation
         anim.SetBool("Moving", true);
 
-        print("Distance: " + Vector2.Distance(transform.position, direction));
-
-        while (Vector2.Distance(transform.position, direction) > 0 && (hit.distance > .8f || hit.collider == null)) {
-            transform.position = Vector2.Lerp(start, direction, speed);
+        while (Time.time < time_start + travel_time && (hit.distance > .8f || hit.collider == null)) {
+            transform.position = Vector2.Lerp(start, direction, (Time.time - time_start) / travel_time);
             hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
             //print("Collider hit: " + (hit.collider == null ? "Nothing" : hit.collider.name) + " Starting distance from collision: " + hit.distance + " Distance from collision (current frame): " + hit.distance);
             yield return null;
