@@ -69,7 +69,6 @@ public class Animal : MonoBehaviour {
         distance = mousepos - (Vector2)transform.position;
 
         //check if there is anyone nearby
-<<<<<<< HEAD
         //if (environment.Count > 1) {
         //    // do boid-like behavior
         //    Vector2 avg = FindAverageVector2(environment);
@@ -84,6 +83,12 @@ public class Animal : MonoBehaviour {
         //    else if (transform.position.Equals(avg)) {
         //        print("Arrived");
         //    }
+        if (environment.Count > 0) {
+            // do boid-like behavior
+            foreach(GameObject o in environment) {
+                Debug.DrawLine(o.transform.position, transform.position, Color.red);
+            }
+        }
 
         //    //if (move_away && !moving) {
         //    //    print("moving away");
@@ -91,14 +96,12 @@ public class Animal : MonoBehaviour {
         //    //    move = StartCoroutine(Move(anti_avg, 3f));
         //    //}
         //}
-=======
         if (environment.Count > 0) {
             // do boid-like behavior
             foreach(GameObject o in environment) {
                 Debug.DrawLine(o.transform.position, transform.position, Color.red);
             }
         }
->>>>>>> parent of 2a4f31c... Added Environment Checking, Vector Calculation Test Script
 
         //else {
         //    //move about randomly
@@ -216,7 +219,6 @@ public class Animal : MonoBehaviour {
     }
 
     IEnumerator Move(Vector2 direction, float travel_time) {
-<<<<<<< HEAD
 
         print("starting move");
 
@@ -224,8 +226,6 @@ public class Animal : MonoBehaviour {
 
         float speed = 0.2f;
 
-=======
->>>>>>> parent of 2a4f31c... Added Environment Checking, Vector Calculation Test Script
         Vector2 start = transform.position;
 
         Debug.DrawLine(start, direction, Color.yellow, 5f);

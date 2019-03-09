@@ -113,7 +113,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
-<<<<<<< HEAD
 --- !u!1001 &104380826
 Prefab:
   m_ObjectHideFlags: 0
@@ -165,8 +164,6 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
   m_IsPrefabAsset: 0
-=======
->>>>>>> parent of 2a4f31c... Added Environment Checking, Vector Calculation Test Script
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2872,13 +2869,10 @@ Prefab:
       propertyPath: m_Name
       value: Sheep (1)
       objectReference: {fileID: 0}
-<<<<<<< HEAD
     - target: {fileID: 1843989129757262, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-=======
->>>>>>> parent of 2a4f31c... Added Environment Checking, Vector Calculation Test Script
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
   m_IsPrefabAsset: 0
