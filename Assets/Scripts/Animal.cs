@@ -96,12 +96,6 @@ public class Animal : MonoBehaviour {
         //    //    move = StartCoroutine(Move(anti_avg, 3f));
         //    //}
         //}
-        if (environment.Count > 0) {
-            // do boid-like behavior
-            foreach(GameObject o in environment) {
-                Debug.DrawLine(o.transform.position, transform.position, Color.red);
-            }
-        }
 
         //else {
         //    //move about randomly
@@ -218,30 +212,32 @@ public class Animal : MonoBehaviour {
         moverand = StartCoroutine(MoveRandom());
     }
 
-    IEnumerator Move(Vector2 direction, float travel_time) {
+    IEnumerator Move(Vector2 end, float travel_time) {
         Vector2 start = transform.position;
         //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
         float time_start = Time.time;
 
-        Debug.DrawLine(start, direction, Color.yellow, 5f);
+        Debug.DrawLine(start, end, Color.yellow, 5f);
 
-        hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
+        hit = Physics2D.Raycast(transform.position, end, flee_distance, ANIMAL_LAYER);
 
         //Prevents the mean ol' player from shoving sheep into a corner. Because nobody puts sheep in a corner.
         //It's hacky; sorry!
         if (hit.distance < .8f) {
-            transform.Translate(-direction / 100);
+            transform.Translate(-end / 100);
         }
 
         //Start movement animation
         anim.SetBool("Moving", true);
 
         while (Time.time < time_start + travel_time && (hit.distance > .8f || hit.collider == null)) {
-            transform.position = Vector2.Lerp(start, direction, (Time.time - time_start) / travel_time);
-            hit = Physics2D.Raycast(transform.position, direction, flee_distance, ANIMAL_LAYER);
+            transform.position = Vector2.Lerp(start, end, (Time.time - time_start) / travel_time);
+            hit = Physics2D.Raycast(transform.position, end, flee_distance, ANIMAL_LAYER);
             //print("Collider hit: " + (hit.collider == null ? "Nothing" : hit.collider.name) + " Starting distance from collision: " + hit.distance + " Distance from collision (current frame): " + hit.distance);
             yield return null;
         }
+
+
 
         //Stop movement animation
         anim.SetBool("Moving", false);
