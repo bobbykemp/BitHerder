@@ -113,7 +113,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &104380826
+--- !u!1001 &317711743
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -122,11 +122,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4595714095686066, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0.69
+      value: 6.78
       objectReference: {fileID: 0}
     - target: {fileID: 4595714095686066, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.57
+      value: 5.7
       objectReference: {fileID: 0}
     - target: {fileID: 4595714095686066, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_LocalPosition.z
@@ -156,10 +156,9 @@ Prefab:
       propertyPath: m_Name
       value: Sheep (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 114203733123178006, guid: 972cca9d910c1614da41a8ead688951e,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
+    - target: {fileID: 1843989129757262, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
@@ -513,11 +512,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4595714095686066, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -6.316723
+      value: 5.05
       objectReference: {fileID: 0}
     - target: {fileID: 4595714095686066, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -0.7422235
+      value: 2.26
       objectReference: {fileID: 0}
     - target: {fileID: 4595714095686066, guid: 972cca9d910c1614da41a8ead688951e, type: 2}
       propertyPath: m_LocalPosition.z
