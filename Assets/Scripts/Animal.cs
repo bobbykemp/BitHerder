@@ -18,7 +18,7 @@ public class Animal : MonoBehaviour {
     public List<GameObject> environment;
 
     private Coroutine move;
-    private GameObject omanager;
+    public GameObject omanager;
     private HerdManager manager;
     private Vector2 movement;
     private float timeLeft;
@@ -28,9 +28,8 @@ public class Animal : MonoBehaviour {
     private Animator anim;
     private SpriteRenderer rend;
     private RaycastHit2D hit;
-    private Coroutine moverand;
     
-    bool moving_randomly, moving_away, done;
+    bool isMoving;
 
     private void Start() {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -38,15 +37,13 @@ public class Animal : MonoBehaviour {
 
         environment = new List<GameObject>();
 
-        moving_randomly = false;
-        moving_away = false;
-        done = false;
+        isMoving = false;
 
         omanager = GameObject.FindGameObjectWithTag("Manager");
         manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
         manager.RecalculateAnimalNumber();
 
-        moverand = StartCoroutine(MoveRandom());
+        StartCoroutine(MoveRandom());
 
     }
 
@@ -60,9 +57,9 @@ public class Animal : MonoBehaviour {
             // do boid-like behavior
 
             foreach(GameObject neighbor in environment) {
-                //Debug.DrawLine(neighbor.transform.position, transform.position, Color.red);
-                if(Vector2.Distance(gameObject.transform.position, neighbor.transform.position) < 2f && !moving_away) {
-                    print("Too close to neighbor, backing off");
+                Debug.DrawLine(neighbor.transform.position, transform.position, Color.red);
+                if(Vector2.Distance(gameObject.transform.position, neighbor.transform.position) < 2f && !isMoving) {
+                    Debug.Log("Too close to neighbor, backing off", gameObject);
                     StopAllCoroutines();
                     StartCoroutine(MoveAwayFrom(GetAverageCliquePosition(), FLEE_DISTANCE));
                 }
@@ -72,7 +69,6 @@ public class Animal : MonoBehaviour {
         if (distance.magnitude < fleeing_proximity) {
             if (Input.GetMouseButtonDown(0)) {
                 //stop moving randomly
-                //StopCoroutine(moverand);
                 StopAllCoroutines();
 
                 //begin fleeing routine
@@ -82,115 +78,8 @@ public class Animal : MonoBehaviour {
 
     }
 
-    // pass it an animal, it calculates the average position of animals in its environment
-    public Vector2 GetAverageCliquePosition() {
-        float total_x = 0;
-        float total_y = 0;
-
-        foreach (GameObject go in environment) {
-            if (!go.Equals(gameObject)) {
-                total_x += go.transform.position.x;
-                total_y += go.transform.position.y;
-            }
-        }
-
-        float average_x = total_x / environment.Count;
-        float average_y = total_y / environment.Count;
-        //print(average_x);
-        //print(average_y);
-
-        Vector2 avg = new Vector2(average_x, average_y);
-
-        Vector2 away = Vector2.MoveTowards(transform.position, avg, -1f);
-
-        //Debug.DrawLine(transform.position, away, Color.cyan, 3f);
-
-        return avg;
-
-    }
-
-    private void OnDestroy() {
-        //manager.RecalculateAnimalNumber();
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision) {
-        switch (collision.gameObject.tag) {
-            case "Animal":
-                print("Animal collision");
-                //StopAllCoroutines();
-                //moverand = StartCoroutine(MoveRandom());
-                environment.Add(collision.gameObject);
-                break;
-            case "Landmine":
-                //print("Landmine collision");
-                Trap trap = (Trap)collision.gameObject.GetComponent(typeof(Trap));
-                trap.Activate(this.gameObject);
-                break;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision) {
-        switch (collision.gameObject.tag) {
-            case "Animal":
-                environment.Remove(collision.gameObject);
-                break;
-        }
-    }
-
-    IEnumerator GroupUp() {
-        Vector2 vector_average = GetAverageCliquePosition();
-
-        Debug.DrawLine(transform.position, vector_average, Color.green, 3f);
-
-        //smaller travel time means faster movement
-        float traveltime = Random.Range(3f, 4f);
-        float timestart = Time.time;
-        Vector2 locstart = transform.position;
-
-        yield return StartCoroutine(Move(vector_average, traveltime));
-
-        //prevents animal from moving immediatley from one location to the next
-        float wait_time = Random.Range(2f, 4f);
-        yield return new WaitForSeconds(wait_time);
-
-        StartMoveRandom();
-    }
-
-    //Represents aimless, illogical movement
-    IEnumerator MoveRandom() {
-
-        moving_randomly = true;
-
-        while (true) {
-            
-            //includes the possible of a zero outcome
-            //may need to alter this in future
-            Vector2 randtrans = Random.insideUnitCircle * Random.Range(-5f, 5f);
-
-            //define animal's new location to move to in reference to current position
-            Vector2 newloc = new Vector2(transform.position.x + randtrans.x, transform.position.y + randtrans.y);
-
-            //smaller travel time means faster movement
-            float traveltime = Random.Range(1f, 4f);
-            float timestart = Time.time;
-            Vector2 locstart = transform.position;
-
-            yield return move = StartCoroutine(Move(newloc, traveltime));
-
-            //prevents animal from moving immediatley from one location to the next
-            float wait_time = Random.Range(2f, 4f);
-            yield return new WaitForSeconds(wait_time);
-
-            moving_randomly = false;
-
-            yield return StartCoroutine(GroupUp());
-        }
-    }
-
     //Represents provoked movement that always moves away from the user's finger/cursor
     IEnumerator MoveAwayFrom(Vector2 direction, float distance) {
-
-        moving_away = true;
 
         Vector2 flee_direction = Vector2.MoveTowards(transform.position, direction, -distance);
 
@@ -199,21 +88,15 @@ public class Animal : MonoBehaviour {
         //show the flee vector for debug purposes
         //Debug.DrawLine(transform.position, flee_direction, Color.white);
 
-        yield return move = StartCoroutine(Move(flee_direction, traveltime));
-
-        moving_away = false;
+        yield return StartCoroutine(Move(flee_direction, traveltime));
 
         StartMoveRandom();
 
     }
 
-    private void StartMoveRandom() {
-        moverand = StartCoroutine(MoveRandom());
-    }
-
     IEnumerator Move(Vector2 end, float travel_time) {
 
-        done = false;
+        isMoving = true;
 
         Vector2 start = transform.position;
         //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
@@ -242,8 +125,112 @@ public class Animal : MonoBehaviour {
         //Stop movement animation
         anim.SetBool("Moving", false);
 
-        done = true;
+        isMoving = false;
 
+    }
+
+    private void StartMoveRandom() {
+        StopAllCoroutines();
+        StartCoroutine(MoveRandom());
+    }
+
+    //Represents aimless, illogical movement
+    IEnumerator MoveRandom() {
+
+        print("Moving randomly");
+
+        //includes the possible of a zero outcome
+        //may need to alter this in future
+        Vector2 randtrans = Random.insideUnitCircle * Random.Range(-5f, 5f);
+
+        //define animal's new location to move to in reference to current position
+        Vector2 newloc = new Vector2(transform.position.x + randtrans.x, transform.position.y + randtrans.y);
+
+        //smaller travel time means faster movement
+        float traveltime = Random.Range(1f, 4f);
+        float timestart = Time.time;
+        Vector2 locstart = transform.position;
+
+        yield return StartCoroutine(Move(newloc, traveltime));
+
+        //prevents animal from moving immediatley from one location to the next
+        float wait_time = Random.Range(2f, 4f);
+        yield return new WaitForSeconds(wait_time);
+
+        yield return StartCoroutine(GroupUp());
+
+    }
+
+    IEnumerator GroupUp() {
+        Vector2 vector_average = GetAverageCliquePosition();
+
+        //Debug.DrawLine(transform.position, vector_average, Color.green, 3f);
+
+        //smaller travel time means faster movement
+        float traveltime = Random.Range(3f, 4f);
+        float timestart = Time.time;
+        Vector2 locstart = transform.position;
+
+        yield return StartCoroutine(Move(vector_average, traveltime));
+
+        //prevents animal from moving immediatley from one location to the next
+        float wait_time = Random.Range(2f, 4f);
+        yield return new WaitForSeconds(wait_time);
+
+        StartMoveRandom();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        switch (collision.gameObject.tag) {
+            case "Animal":
+                print("Animal collision");
+                environment.Add(collision.gameObject);
+                break;
+            case "Landmine":
+                //print("Landmine collision");
+                Trap trap = (Trap)collision.gameObject.GetComponent(typeof(Trap));
+                trap.Activate(this.gameObject);
+                break;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision) {
+        switch (collision.gameObject.tag) {
+            case "Animal":
+                environment.Remove(collision.gameObject);
+                break;
+        }
+    }
+
+    // pass it an animal, it calculates the average position of animals in its environment
+    public Vector2 GetAverageCliquePosition() {
+        float total_x = 0;
+        float total_y = 0;
+
+        foreach (GameObject go in environment) {
+            if (!go.Equals(gameObject)) {
+                total_x += go.transform.position.x;
+                total_y += go.transform.position.y;
+            }
+        }
+
+        float average_x = total_x / environment.Count;
+        float average_y = total_y / environment.Count;
+        //print(average_x);
+        //print(average_y);
+
+        Vector2 avg = new Vector2(average_x, average_y);
+
+        Vector2 away = Vector2.MoveTowards(transform.position, avg, -1f);
+
+        Debug.DrawLine(transform.position, away, Color.cyan, 3f);
+
+        return avg;
+
+    }
+
+    private void OnDestroy() {
+        //manager.RecalculateAnimalNumber();
     }
 
 }

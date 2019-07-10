@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class HerdManager : MonoBehaviour {
 
     public GameObject instantiation_animal;
-    [Range(1, 100)]
+    [Range(0, 100)]
     public int animal_instantiation_count;
 
     private float total_x = 0;
@@ -50,7 +50,7 @@ public class HerdManager : MonoBehaviour {
 
         for(int i = 0; i < animal_instantiation_count; i++) {
             GameObject.Instantiate(instantiation_animal, startcrate.transform.position, startcrate.transform.rotation);
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(0.5f);
         }
 
     }
