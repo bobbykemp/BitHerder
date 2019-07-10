@@ -18,10 +18,9 @@ public class HerdManager : MonoBehaviour {
     private Text text;
     private GameObject startcrate;
 
-    // Use this for initialization
     void Start () {
 
-        SpawnHerd();
+        StartCoroutine(SpawnHerd());
 
         animals = GameObject.FindGameObjectsWithTag("Animal");
         overlay = GameObject.FindGameObjectWithTag("Overlay");
@@ -34,12 +33,11 @@ public class HerdManager : MonoBehaviour {
 
         InvokeRepeating("GetAverage", 0f, 3f);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    void Update(){
 
     }
-
+	
     //private void SetupCanvasOverlay() {
     //    GameObject go = new GameObject("Overlay", typeof(Canvas));
 
@@ -47,11 +45,12 @@ public class HerdManager : MonoBehaviour {
     //    canvas.renderMode = RenderMode.ScreenSpaceOverlay;
     //}
 
-    private void SpawnHerd() {
+   IEnumerator SpawnHerd() {
         startcrate = GameObject.FindGameObjectWithTag("StartCrate");
 
         for(int i = 0; i < animal_instantiation_count; i++) {
             GameObject.Instantiate(instantiation_animal, startcrate.transform.position, startcrate.transform.rotation);
+            yield return new WaitForSeconds(3f);
         }
 
     }
@@ -84,9 +83,9 @@ public class HerdManager : MonoBehaviour {
 
         Vector2 avg = new Vector2(average_x, average_y);
 
-        foreach (GameObject go in animals) {
-            Debug.DrawLine(go.transform.position, avg, Color.cyan, 3f);
-        }
+        // foreach (GameObject go in animals) {
+        //     Debug.DrawLine(go.transform.position, avg, Color.cyan, 3f);
+        // }
 
         return avg;
 

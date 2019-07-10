@@ -11,10 +11,9 @@ public class Animal : MonoBehaviour {
     //the ninth layer represents the layer that the animals are on
     //this constant is used to prevent collisions between animal rigidbodies
     private const int ANIMAL_LAYER = 9;
-
     public float maxSpeed = 5f;
     public float fleeing_proximity = 8; //closest radius at which an animal will flee from user's cursor
-    public float FLEE_DISTANCE = 5f;    //distance the animal will flee when provoked
+    public float FLEE_DISTANCE = 3f;    //distance the animal will flee when provoked
     public CircleCollider2D personal_space;
     public List<GameObject> environment;
 
@@ -43,27 +42,12 @@ public class Animal : MonoBehaviour {
         moving_away = false;
         done = false;
 
+        omanager = GameObject.FindGameObjectWithTag("Manager");
+        manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
+        manager.RecalculateAnimalNumber();
+
         moverand = StartCoroutine(MoveRandom());
 
-        //omanager = GameObject.FindGameObjectWithTag("Manager");
-        //manager = (HerdManager)omanager.GetComponent(typeof(HerdManager));
-
-
-        //try {
-
-        //}
-
-        //catch(Exception e) {
-        //    if (e.InnerException is NullReferenceException){
-
-        //    }
-        //}
-
-        //manager.RecalculateAnimalNumber();
-
-        //moverand = StartCoroutine(MoveRandom());
-
-        //Physics2D.IgnoreLayerCollision(ANIMAL_LAYER, ANIMAL_LAYER);
     }
 
     void Update() {
@@ -72,60 +56,18 @@ public class Animal : MonoBehaviour {
         mousepos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         distance = mousepos - (Vector2)transform.position;
 
-        //print(gameObject.name + " " + moving_away);
-
-        //check if there is anyone nearby
-        //if (environment.Count > 1) {
-        //    // do boid-like behavior
-        //    Vector2 avg = FindAverageVector2(environment);
-        //    Debug.DrawLine(transform.position, avg, Color.black, 3f);
-
-        //    Vector2 anti_avg= Vector2.MoveTowards(transform.position, avg, -5f);
-        //    //Debug.DrawLine(transform.position, anti_avg, Color.green);
-
-        //    if (!moving) {
-        //        move = StartCoroutine(Move(avg, 3f));
-        //    }
-        //    else if (transform.position.Equals(avg)) {
-        //        print("Arrived");
-        //    }
-
         if (environment.Count > 0) {
             // do boid-like behavior
-            
 
             foreach(GameObject neighbor in environment) {
-                Debug.DrawLine(neighbor.transform.position, transform.position, Color.red);
-                if(Vector2.Distance(gameObject.transform.position, neighbor.transform.position) < 5f && !moving_away) {
+                //Debug.DrawLine(neighbor.transform.position, transform.position, Color.red);
+                if(Vector2.Distance(gameObject.transform.position, neighbor.transform.position) < 2f && !moving_away) {
                     print("Too close to neighbor, backing off");
                     StopAllCoroutines();
                     StartCoroutine(MoveAwayFrom(GetAverageCliquePosition(), FLEE_DISTANCE));
                 }
             }
         }
-
-        //    //if (move_away && !moving) {
-        //    //    print("moving away");
-        //    //    StopCoroutine(move);
-        //    //    move = StartCoroutine(Move(anti_avg, 3f));
-        //    //}
-        //}
-
-        //else {
-        //    //move about randomly
-        //    if (!moving_randomly) {
-        //        moverand = StartCoroutine(MoveRandom());
-        //    }
-        //}
-
-        //define the vector coming out of the other side of the animal
-        //this is the direction the animal will flee
-        //FLEE_DISTANCE must ALWAYS be negative or else the animal will flee toward user's cursor
-        //Vector2 flee_direction = Vector2.MoveTowards(transform.position, mousepos, -FLEE_DISTANCE);
-
-        //if (done) {
-        //    moverand = StartCoroutine(MoveRandom());
-        //}
 
         if (distance.magnitude < fleeing_proximity) {
             if (Input.GetMouseButtonDown(0)) {
@@ -161,9 +103,7 @@ public class Animal : MonoBehaviour {
 
         Vector2 away = Vector2.MoveTowards(transform.position, avg, -1f);
 
-        //foreach (GameObject go in environment) {
-        Debug.DrawLine(transform.position, away, Color.cyan, 3f);
-        //}
+        //Debug.DrawLine(transform.position, away, Color.cyan, 3f);
 
         return avg;
 
@@ -176,7 +116,7 @@ public class Animal : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
         switch (collision.gameObject.tag) {
             case "Animal":
-                //print("Animal collision");
+                print("Animal collision");
                 //StopAllCoroutines();
                 //moverand = StartCoroutine(MoveRandom());
                 environment.Add(collision.gameObject);
@@ -198,18 +138,22 @@ public class Animal : MonoBehaviour {
     }
 
     IEnumerator GroupUp() {
-        //Vector2 vector_average = manager.GetAverage();
+        Vector2 vector_average = GetAverageCliquePosition();
+
+        Debug.DrawLine(transform.position, vector_average, Color.green, 3f);
 
         //smaller travel time means faster movement
         float traveltime = Random.Range(3f, 4f);
         float timestart = Time.time;
         Vector2 locstart = transform.position;
 
-        //yield return StartCoroutine(Move(vector_average, traveltime));
+        yield return StartCoroutine(Move(vector_average, traveltime));
 
         //prevents animal from moving immediatley from one location to the next
         float wait_time = Random.Range(2f, 4f);
         yield return new WaitForSeconds(wait_time);
+
+        StartMoveRandom();
     }
 
     //Represents aimless, illogical movement
@@ -239,7 +183,7 @@ public class Animal : MonoBehaviour {
 
             moving_randomly = false;
 
-            //yield return StartCoroutine(GroupUp());
+            yield return StartCoroutine(GroupUp());
         }
     }
 
@@ -253,7 +197,7 @@ public class Animal : MonoBehaviour {
         float traveltime = 1.5f;
 
         //show the flee vector for debug purposes
-        Debug.DrawLine(transform.position, flee_direction, Color.white);
+        //Debug.DrawLine(transform.position, flee_direction, Color.white);
 
         yield return move = StartCoroutine(Move(flee_direction, traveltime));
 
@@ -275,7 +219,7 @@ public class Animal : MonoBehaviour {
         //travel_time = (start.magnitude - direction.magnitude) / 0.25f;
         float time_start = Time.time;
 
-        Debug.DrawLine(start, end, Color.yellow, 5f);
+        //Debug.DrawLine(start, end, Color.yellow, 5f);
 
         hit = Physics2D.Raycast(transform.position, end, FLEE_DISTANCE, ANIMAL_LAYER);
 

@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4595714095686066}
   - component: {fileID: 212567828930841032}
-  - component: {fileID: 114203733123178006}
+  - component: {fileID: 114483432648423102}
   - component: {fileID: 95838820243328642}
   - component: {fileID: 50021089417769550}
   - component: {fileID: 58489850097390128}
@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1843989129757262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.44, y: -2.72, z: 0}
+  m_LocalPosition: {x: 6.78, y: 5.7, z: 0}
   m_LocalScale: {x: 4.0195894, y: 4.201869, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -123,7 +123,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114203733123178006
+--- !u!114 &114483432648423102
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,8 +136,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 5
   fleeing_proximity: 8
-  flee_distance: 5
+  FLEE_DISTANCE: 3
   personal_space: {fileID: 0}
+  environment: []
 --- !u!212 &212567828930841032
 SpriteRenderer:
   m_ObjectHideFlags: 1
