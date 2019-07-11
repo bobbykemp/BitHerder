@@ -20,7 +20,7 @@ TagManager:
   - 
   - Barriers
   - Animals
-  - 
+  - Ground
   - 
   - 
   - 
@@ -43,12 +43,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Ground
-    uniqueID: 1457857055
-    locked: 0
   - name: Animals
     uniqueID: 2515111321
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 1457857055
     locked: 0
