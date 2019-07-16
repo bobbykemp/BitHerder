@@ -83,7 +83,7 @@ public class Animal : MonoBehaviour {
 
         Vector2 flee_direction = Vector2.MoveTowards(transform.position, direction, -distance);
 
-        float traveltime = 1.5f;
+        float traveltime = 2.5f;
 
         //show the flee vector for debug purposes
         //Debug.DrawLine(transform.position, flee_direction, Color.white);
@@ -147,7 +147,7 @@ public class Animal : MonoBehaviour {
         Vector2 newloc = new Vector2(transform.position.x + randtrans.x, transform.position.y + randtrans.y);
 
         //smaller travel time means faster movement
-        float traveltime = Random.Range(1f, 4f);
+        float traveltime = Random.Range(2f, 4f);
         float timestart = Time.time;
         Vector2 locstart = transform.position;
 
@@ -167,7 +167,7 @@ public class Animal : MonoBehaviour {
         //Debug.DrawLine(transform.position, vector_average, Color.green, 3f);
 
         //smaller travel time means faster movement
-        float traveltime = Random.Range(3f, 4f);
+        float traveltime = Random.Range(2f, 4f);
         float timestart = Time.time;
         Vector2 locstart = transform.position;
 

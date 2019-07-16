@@ -9,6 +9,7 @@ TagManager:
   - Overlay
   - StartCrate
   - Landmine
+  - Spawner
   layers:
   - Default
   - TransparentFX
