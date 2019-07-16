@@ -83,7 +83,7 @@ public class Animal : MonoBehaviour {
 
         Vector2 flee_direction = Vector2.MoveTowards(transform.position, direction, -distance);
 
-        float traveltime = 2.5f;
+        float traveltime = 2f;
 
         //show the flee vector for debug purposes
         //Debug.DrawLine(transform.position, flee_direction, Color.white);
@@ -183,13 +183,13 @@ public class Animal : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
         switch (collision.gameObject.tag) {
             case "Animal":
-                print("Animal collision");
                 environment.Add(collision.gameObject);
                 break;
             case "Landmine":
-                //print("Landmine collision");
                 Trap trap = (Trap)collision.gameObject.GetComponent(typeof(Trap));
-                trap.Activate(this.gameObject);
+                if(Vector2.Distance(gameObject.transform.position, collision.gameObject.transform.position) < 3f){
+                    trap.Activate(this.gameObject);
+                }
                 break;
         }
     }

@@ -12,23 +12,18 @@ public class Trap : MonoBehaviour {
     }
 
     public void Activate(GameObject victim) {
-        print("Animal collision from landmine");
         anim.Play("Landmine_Explode");
-        //StartCoroutine(WaitAFew(5f));
-        
+        StartCoroutine(WaitAFew(6f, victim));
     }
 
-    //IEnumerator WaitAFew(float seconds) {
-    //    //yield return new Waut
-    //}
+    IEnumerator WaitAFew(float seconds, GameObject victim) {
+        yield return new WaitForSeconds(seconds); 
+        Explode(victim);
+    }
 
     private void Explode(GameObject victim) {
         Destroy(victim);
         Destroy(this.gameObject);
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }
