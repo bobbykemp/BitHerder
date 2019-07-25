@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,8 +13,9 @@ public class Trap : MonoBehaviour {
     }
 
     public void Activate(GameObject victim) {
+        print("TRAP ACTIVE");
         anim.Play("Landmine_Explode");
-        StartCoroutine(WaitAFew(6f, victim));
+        StartCoroutine(WaitAFew(.25f, victim));
     }
 
     IEnumerator WaitAFew(float seconds, GameObject victim) {
@@ -22,6 +24,12 @@ public class Trap : MonoBehaviour {
     }
 
     private void Explode(GameObject victim) {
+        Animal animal = (Animal)victim.GetComponent(typeof(Animal));
+        foreach(GameObject neighbor in animal.GetEnvironment().Where(n => n != null)){
+            if(neighbor.tag == "Animal"){
+                animal.RemoveFromEnvironment(gameObject);
+            }
+        }
         Destroy(victim);
         Destroy(this.gameObject);
     }

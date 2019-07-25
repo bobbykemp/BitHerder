@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-//using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,13 +56,24 @@ public class Animal : MonoBehaviour {
         if (environment.Count > 0) {
             // do boid-like behavior
 
-            foreach(GameObject neighbor in environment) {
-                Debug.DrawLine(neighbor.transform.position, transform.position, Color.red);
-                if(Vector2.Distance(gameObject.transform.position, neighbor.transform.position) < 2f && !isMoving) {
-                    Debug.Log("Too close to neighbor, backing off", gameObject);
-                    StopAllCoroutines();
-                    StartCoroutine(MoveAwayFrom(GetAverageCliquePosition(), FLEE_DISTANCE));
+            foreach(GameObject neighbor in environment.Where(n => n != null)) {
+                if(neighbor.tag =="Animal"){
+                    Debug.DrawLine(neighbor.transform.position, transform.position, Color.red);
+                    if(Vector2.Distance(gameObject.transform.position, neighbor.transform.position) < 2f && !isMoving) {
+                        Debug.Log("Too close to neighbor, backing off", gameObject);
+                        StopAllCoroutines();
+                        StartCoroutine(MoveAwayFrom(GetAverageCliquePosition(), FLEE_DISTANCE));
+                    }
                 }
+
+                if(neighbor.tag == "Landmine"){
+                    Trap trap = (Trap)neighbor.GetComponent(typeof(Trap));
+                    print(Vector2.Distance(gameObject.transform.position, neighbor.gameObject.transform.position));
+                    if(Vector2.Distance(gameObject.transform.position, neighbor.gameObject.transform.position) < 1.5f){
+                        trap.Activate(this.gameObject);
+                    }
+                }
+                
             }
         }
 
@@ -186,10 +197,7 @@ public class Animal : MonoBehaviour {
                 environment.Add(collision.gameObject);
                 break;
             case "Landmine":
-                Trap trap = (Trap)collision.gameObject.GetComponent(typeof(Trap));
-                if(Vector2.Distance(gameObject.transform.position, collision.gameObject.transform.position) < 3f){
-                    trap.Activate(this.gameObject);
-                }
+                environment.Add(collision.gameObject);
                 break;
         }
     }
@@ -207,8 +215,8 @@ public class Animal : MonoBehaviour {
         float total_x = 0;
         float total_y = 0;
 
-        foreach (GameObject go in environment) {
-            if (!go.Equals(gameObject)) {
+        foreach (GameObject go in environment.Where(n => n != null)) {
+            if (!go.Equals(gameObject) && go.tag == "Animal") {
                 total_x += go.transform.position.x;
                 total_y += go.transform.position.y;
             }
@@ -229,8 +237,16 @@ public class Animal : MonoBehaviour {
 
     }
 
+    public void RemoveFromEnvironment(GameObject neighbor){
+        environment.Remove(neighbor);
+    }
+
+    public List<GameObject> GetEnvironment(){
+        return environment;
+    }
+
     private void OnDestroy() {
-        //manager.RecalculateAnimalNumber();
+       manager.RecalculateAnimalNumber(); 
     }
 
 }
