@@ -120,7 +120,7 @@ public class Animal : MonoBehaviour {
         //Prevents the mean ol' player from shoving sheep into a corner. Because nobody puts sheep in a corner.
         //It's hacky; sorry!
         if (hit.distance < .8f) {
-            transform.Translate(-end / 100);
+            transform.Translate(-end / 999);
         }
 
         //Start movement animation
@@ -194,8 +194,6 @@ public class Animal : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision) {
         switch (collision.gameObject.tag) {
             case "Animal":
-                environment.Add(collision.gameObject);
-                break;
             case "Landmine":
                 environment.Add(collision.gameObject);
                 break;
@@ -205,6 +203,7 @@ public class Animal : MonoBehaviour {
     private void OnTriggerExit2D(Collider2D collision) {
         switch (collision.gameObject.tag) {
             case "Animal":
+            case "Landmine":
                 environment.Remove(collision.gameObject);
                 break;
         }

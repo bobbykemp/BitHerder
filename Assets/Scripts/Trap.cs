@@ -25,7 +25,7 @@ public class Trap : MonoBehaviour {
 
     private void Explode(GameObject victim) {
         Animal animal = (Animal)victim.GetComponent(typeof(Animal));
-        foreach(GameObject neighbor in animal.GetEnvironment().Where(n => n != null)){
+        foreach(GameObject neighbor in animal.GetEnvironment().Where(n => n != null).ToList()){
             if(neighbor.tag == "Animal"){
                 animal.RemoveFromEnvironment(gameObject);
             }
